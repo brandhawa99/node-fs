@@ -27,13 +27,15 @@ import * as fs from "node:fs/promises"
 
   const renameFile = async (oldPath, newPath) => {
     try {
-      await fs.copyFile(oldPath, newPath)
-      return console.log(`${oldPath} copied to ${newPath}`)
+      await fs.rename(oldPath, newPath)
+      return console.log(`${oldPath} renamed to ${newPath}`)
     } catch (error) {
-      if (error.code === "ENOENT") {
-        return console.log(`${newPath} doesn't exist`)
-      }
-      console.log(`${newPath} already exists`);
+      // TODO fix error 
+      // if (error.code === "ENOENT") {
+      //   return console.log(`${oldPath} doesn't exist`)
+      // }
+      // console.log(`${newPath} already exists`);
+      console.log(error);
     }
 
   }
