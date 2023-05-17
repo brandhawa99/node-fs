@@ -26,10 +26,27 @@ import * as fs from "node:fs/promises"
   };
 
   const renameFile = async (oldPath, newPath) => {
+    try {
+      await fs.copyFile(oldPath, newPath)
+      return console.log(`${oldPath} copied to ${newPath}`)
+    } catch (error) {
+      if (error.code === "ENOENT") {
+        return console.log(`${newPath} doesn't exist`)
+      }
+      console.log(`${newPath} already exists`);
+    }
 
   }
   const addToFile = async (path, content) => {
-
+    let exists;
+    try {
+      exists = await fs.open(path, "w+");
+      await exists.writeFile(content);
+      exists.close();
+      return console.log(`added ${content} to ${path}`)
+    } catch (error) {
+      console.log(error);
+    }
   }
   //commands 
   const CREATE_FILE = "create a file"
@@ -66,12 +83,18 @@ import * as fs from "node:fs/promises"
     }
     // rename a file:
     // rename a file <oldPath> to <newPath>
-    if (command.includes(CREATE_FILE)) {
-
+    if (command.includes(RENAME_FILE)) {
+      const _idx = command.indexOf(" to ");
+      const oldPath = command.substring(RENAME_FILE.length + 1, _idx);
+      const newPath = command.substring(_idx + 4);
+      renameFile(oldPath, newPath);
     }
-    // add to a file <path> <txt>
+    // add to a file <path> this content: <txt>
     if (command.includes(ADD_TO_FILE)) {
-
+      const _idx = command.indexOf(" this content: ");
+      const filePath = command.substring(ADD_TO_FILE.length + 1, _idx);
+      const text = command.substring(_idx + 15);
+      addToFile(filePath, text);
     }
   })
 
