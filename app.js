@@ -31,23 +31,25 @@ import * as fs from "node:fs/promises"
       return console.log(`${oldPath} renamed to ${newPath}`)
     } catch (error) {
       // TODO fix error 
-      // if (error.code === "ENOENT") {
-      //   return console.log(`${oldPath} doesn't exist`)
-      // }
-      // console.log(`${newPath} already exists`);
-      console.log(error);
+      if (error.code === "ENOENT") {
+        console.log(error);
+        return console.log(`${oldPath} doesn't exist`)
+      }
+      console.log(`${newPath} already exists`);
     }
 
   }
   const addToFile = async (path, content) => {
     let exists;
     try {
-      exists = await fs.open(path, "w+");
+      exists = await fs.open(path, "r+");
       await exists.writeFile(content);
       exists.close();
       return console.log(`added ${content} to ${path}`)
     } catch (error) {
-      console.log(error);
+      if (error.code === "ENOENT") {
+        console.log(`${path} does not exist`);
+      }
     }
   }
   //commands 
